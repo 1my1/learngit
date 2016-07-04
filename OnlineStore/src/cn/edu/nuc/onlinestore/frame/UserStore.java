@@ -25,7 +25,7 @@ public class UserStore extends JFrame {
 
 	/**
 	 * Launch the application.
-	 *//*
+	 */
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
@@ -37,12 +37,12 @@ public class UserStore extends JFrame {
 				}
 			}
 		});
-	}*/
+	}
 
 	/**
 	 * Create the frame.
 	 */
-	public UserStore() {
+	public UserStore(){
 		setTitle("中北在线商场--当前用户:李四");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 732, 467);
@@ -72,14 +72,47 @@ public class UserStore extends JFrame {
 		});
 		button_2.setBounds(407, 45, 299, 23);
 		contentPane.add(button_2);
-		//退出系统
-		JButton button_exit = new JButton("退出系统");
-		button_exit.setBounds(613, 6, 93, 23);
-		button_exit.addActionListener(new ActionListener() {
+		//登录
+		JButton button_login=new JButton("登录");
+		button_login.setBounds(500, 6, 73, 23);
+		button_login.addActionListener(new ActionListener() {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
+				UserLogin ul=new UserLogin();
+				ul.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+				ul.setVisible(true);
+			}
+		});
+		contentPane.add(button_login);
+		//注册新用户
+		JButton button_regist=new JButton("注册");
+		button_regist.setBounds(573, 6, 73, 23);
+		button_regist.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				//连接服务端
+				
+				//调用RegistAction来注册
+				
+				//如果存在则提示  用户已存在
+				
+				//不存在 提示 用户注册成功
+			}
+		});
+		contentPane.add(button_regist);
+		//退出登录
+		JButton button_exit = new JButton("注销");
+		button_exit.setBounds(633, 6, 73, 23);
+		button_exit.addActionListener(new ActionListener(){
+			@Override
+			public void actionPerformed(ActionEvent e){
+				
+				//注销之后  本次服务结束  关闭和服务端的连接
+				
+				//frame.setVisible(true);
 				int exit=JOptionPane.showConfirmDialog(null, "确定退出程序？", "退出程序", JOptionPane.OK_CANCEL_OPTION);
 				//System.out.println(exit);
 				if(exit==0){
@@ -87,7 +120,6 @@ public class UserStore extends JFrame {
 				}
 			}
 		});
-		
 		contentPane.add(button_exit);
 		//按商品名称来查找商品
 		JLabel lblid = new JLabel("商品名称:");
@@ -113,12 +145,14 @@ public class UserStore extends JFrame {
 		contentPane.add(label_cart_goodsNum);
 		//购物车按钮
 		JButton button_viewCart = new JButton("查看购物车");
+		button_viewCart.setEnabled(false);
 		button_viewCart.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
 				UserCartFrame cf = new UserCartFrame();
 				cf.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 				cf.setVisible(true);
+				
 			}
 		});
 		button_viewCart.setBounds(116, 6, 110, 23);

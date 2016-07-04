@@ -27,7 +27,6 @@ public class AdminStore extends JFrame {
 
 	private JPanel contentPane;
 	private JTextField textField;
-
 	/**
 	 * Launch the application.
 	 */
@@ -43,7 +42,6 @@ public class AdminStore extends JFrame {
 			}
 		});
 	}
-
 	/**
 	 * Create the frame.
 	 */

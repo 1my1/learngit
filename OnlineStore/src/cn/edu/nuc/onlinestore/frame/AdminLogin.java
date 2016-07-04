@@ -69,11 +69,15 @@ public class AdminLogin extends JFrame {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
+				//验证账号和密码是否正确
+				
+				//如果正确进入adminStore页面
+				
+				//如果不正确弹出输入不正确的提示框
 				AdminStore as=new AdminStore();
 				as.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 				as.setVisible(true);
-				AdminLogin.this.dispose();
+				AdminLogin.this.setVisible(false);
 			}
 		});
 		contentPane.add(button);
