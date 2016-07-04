@@ -1,2 +1,7 @@
 merge测试--->fast-merge
+<<<<<<< HEAD
 dev分支
+=======
+dev2修改了read1.txt
+测试rebase
+>>>>>>> dev2
