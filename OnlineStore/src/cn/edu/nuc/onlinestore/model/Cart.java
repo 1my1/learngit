@@ -9,7 +9,7 @@ public class Cart implements Serializable {
 	private static final long serialVersionUID = -5523647580332725112L;
 	
 	
-	private Map<Goods, Integer> maps = new HashMap<>();
+	private Map<Goods, Integer> maps = new HashMap<Goods, Integer>();
 	
 	//购物车商品总价格
 	private double totalPrice = 0;
@@ -57,9 +57,9 @@ public class Cart implements Serializable {
 	 * @param gid
 	 * @return
 	 */
-	public int remove(int gid){
+	public int remove(String gid){
 		Goods goods = new Goods();
-		goods.setGid(gid);
+		goods.setId(gid);
 		
 		return this.remove(goods);
 	}

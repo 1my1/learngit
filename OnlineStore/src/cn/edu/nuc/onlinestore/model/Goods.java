@@ -2,50 +2,41 @@ package cn.edu.nuc.onlinestore.model;
 
 import java.io.Serializable;
 
-public class Goods implements Serializable {
-	
-	private static final long serialVersionUID = 3565587646030892291L;
-
-	/*
-	 * 商品编号
-	 */
-	private int gid;
-	/*
-	 * 商品名称
-	 */
-	private String goodsName;
-	/*
-	 * 商品单价
-	 */
-	private float price;
-	
-	//此处其余属性省略,可根据需要自行添加
-	
-	public int getGid() {
-		return gid;
+public class Goods implements Serializable{
+    private String name;
+    private String id;
+    private double price;
+    private int num;
+	public String getName() {
+		return name;
 	}
-	public void setGid(int gid) {
-		this.gid = gid;
+	public void setName(String name) {
+		this.name = name;
 	}
-	public String getGoodsName() {
-		return goodsName;
+	public String getId() {
+		return id;
 	}
-	public void setGoodsName(String goodsName) {
-		this.goodsName = goodsName;
+	public void setId(String id) {
+		this.id = id;
 	}
-	public float getPrice() {
+	public double getPrice() {
 		return price;
 	}
-	public void setPrice(float price) {
+	public void setPrice(double price) {
 		this.price = price;
 	}
-	//根据需要重写 hashCode() 及 equals() 
-	//此处以商品id为判定是否为同一商品标准,可根据需要自行修改
+	public int getNum() {
+		return num;
+	}
+	public void setNum(Integer num) {
+		this.num = num;
+	}
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + gid;
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		result = prime * result + ((name == null) ? 0 : name.hashCode());
 		return result;
 	}
 	@Override
@@ -57,16 +48,22 @@ public class Goods implements Serializable {
 		if (getClass() != obj.getClass())
 			return false;
 		Goods other = (Goods) obj;
-		if (gid != other.gid)
+		if (id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
+			return false;
+		if (name == null) {
+			if (other.name != null)
+				return false;
+		} else if (!name.equals(other.name))
 			return false;
 		return true;
 	}
-	
-	//根据需要重写toString()
 	@Override
 	public String toString() {
-		return "Goods [gid=" + gid + ", goodsName=" + goodsName + ", price=" + price + "]";
+		return "Goods [name=" + name + ", id=" + id + ", price=" + price + ", num=" + num + "]";
 	}
 	
-	
+    
 }

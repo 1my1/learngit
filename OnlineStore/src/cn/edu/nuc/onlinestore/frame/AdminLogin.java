@@ -7,7 +7,12 @@ import java.awt.event.ActionListener;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+
+import cn.edu.nuc.onlinestore.action.LoginActionProcess;
+import cn.edu.nuc.onlinestore.model.Admin;
+
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.JPasswordField;
 import javax.swing.JButton;
@@ -17,7 +22,7 @@ public class AdminLogin extends JFrame {
 	private JPanel contentPane;
 	private JTextField textField;
 	private JPasswordField passwordField;
-
+    private LoginActionProcess lap;
 	/**
 	 * Launch the application.
 	 */
@@ -69,15 +74,32 @@ public class AdminLogin extends JFrame {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				lap=new LoginActionProcess();
+				
+				
+				String adminName=textField.getText();
+				String password=new String (passwordField.getPassword());
+				if("".equals(adminName)||"".equals(password)){
+					JOptionPane.showMessageDialog(null, "账号或密码不能为空！");
+					return;
+				}
+				Admin a=new Admin();
+				a.setName(adminName);
+				a.setPass(password);
 				//验证账号和密码是否正确
-				
+				boolean result=lap.check(a);
 				//如果正确进入adminStore页面
-				
+				if(result){
+					AdminStore as=new AdminStore();
+					as.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+					as.setVisible(true);
+					AdminLogin.this.setVisible(false);
+				}else{
+					JOptionPane.showMessageDialog(null, "登录失败！");
+					return;
+				}
 				//如果不正确弹出输入不正确的提示框
-				AdminStore as=new AdminStore();
-				as.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
-				as.setVisible(true);
-				AdminLogin.this.setVisible(false);
+				
 			}
 		});
 		contentPane.add(button);

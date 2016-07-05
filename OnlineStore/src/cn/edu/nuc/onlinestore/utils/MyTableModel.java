@@ -3,7 +3,7 @@ package cn.edu.nuc.onlinestore.utils;
 import javax.swing.table.AbstractTableModel;
 
 public class MyTableModel extends AbstractTableModel{
-	   private boolean DEBUG=false;
+	    private boolean DEBUG=false;
         private String[] columnNames={"商品ID","商品名称","商品价格","商品数量","操作"};
         //仓库里的所有商品
         private Object[][] goodsStore={
@@ -11,7 +11,14 @@ public class MyTableModel extends AbstractTableModel{
         		{"2","C++","32","11", new Boolean(false)},
         		{"3","UML","55","12", new Boolean(true)},
         };
-        //table有多少列
+        
+        public Object[][] getGoodsStore() {
+			return goodsStore;
+		}
+		public void setGoodsStore(Object[][] goodsStore) {
+			this.goodsStore = goodsStore;
+		}
+		//table有多少列
 		public int getColumnCount() {
 			// TODO Auto-generated method stub
 			return columnNames.length;
@@ -35,7 +42,7 @@ public class MyTableModel extends AbstractTableModel{
          * then the last column would contain text ("true"/"false"),
          * rather than a check box.
          */
-       public Class getColumnClass(int c) {
+        public Class getColumnClass(int c) {
             return getValueAt(0, c).getClass();
         }
        /*
@@ -87,6 +94,11 @@ public class MyTableModel extends AbstractTableModel{
           }
           System.out.println("--------------------------");
       }
+      @Override
+    public void fireTableRowsDeleted(int firstRow, int lastRow) {
+    // TODO Auto-generated method stub
+          super.fireTableRowsDeleted(firstRow, lastRow);
+    }
 		
 }
 

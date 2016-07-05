@@ -3,6 +3,10 @@ package cn.edu.nuc.onlinestore.frame;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -20,34 +24,16 @@ import javax.swing.JPasswordField;
 import javax.swing.JButton;
 import javax.swing.ImageIcon;
 
-public class UserLogin extends JFrame {
+public class UserRegist extends JFrame {
 
 	private JPanel contentPane;
 	private JTextField textField;
 	private JPasswordField passwordField;
-	private User user=null;
-	
-
-	/**
-	 * Launch the application.
-	 */
-	/*public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					UserLogin frame = new UserLogin();
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}*/
 
 	/**
 	 * Create the frame.
 	 */
-	public UserLogin() {
+	public UserRegist() {
 		setTitle("中北线在商场-登录");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 461, 349);
@@ -76,39 +62,47 @@ public class UserLogin extends JFrame {
 		
 		
 		
-		JButton button = new JButton("登录");
+		JButton button = new JButton("注册");
 		button.setBounds(255, 216, 93, 23);
 		button.addActionListener(new ActionListener(){
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-			    User u=new User();
-			    Message<User> message=new Message<User>();
+			    User user=new User();
 				String userName=textField.getText();
 				String password=new String(passwordField.getPassword());
 				if("".equals(userName) || "".equals(password) ){
+					
 					JOptionPane.showMessageDialog(null, "用户名或密码不能为空！");
 					return;
 				}
-				u.setName(userName);
-				u.setPass(password);
-				//封装要发送的消息
-				message.setObj(u);
-				message.setMessage("login");
-                //连接服务器   （把要登录的用户名和密码序列化   交给服务端来验证）
-				ClientLoginAction cla=new ClientLoginAction(message);
-				cla.send();
-				//接受服务端发过来的提示信息     如果正确     提示登录成功   购物车变为可用
-				Result<User> result=cla.get();
+				user.setName(userName);
+				user.setPass(userName);
+                Message<User> message=new Message<User>(); 
+                message.setMessage("regist");
+                message.setObj(user);
+                //连接服务端
+                ClientLoginAction cla=new ClientLoginAction(message);
+                //发送被验证消息
+                cla.send();
+                //服务端返回消息
+                Result<User> result=cla.get();
+                //处理返回消息
 				if(!result.equals(null)){
 					String tip=result.getMsg();
 					user=result.getObj();
 					if(!"".equals(tip) && "success".equals(tip)){
 						JOptionPane.showMessageDialog(null, tip);
+					}else if(!"".equals(tip)&& "exist".equals(tip)){
+						JOptionPane.showMessageDialog(null, tip);
+					}else if(!"".equals(tip)&& "error".equals(tip)){
+						JOptionPane.showMessageDialog(null, tip);
 					}
-					
 				}
-				//如果不正确 提示登录失败  购物车不可用
+                
+                
+				
+				
 			}
 		});
 		contentPane.add(button);

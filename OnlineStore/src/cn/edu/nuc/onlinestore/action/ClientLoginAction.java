@@ -1,34 +1,37 @@
 package cn.edu.nuc.onlinestore.action;
 
-import java.io.DataInputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
 import cn.edu.nuc.onlinestore.model.User;
+import cn.edu.nuc.onlinestore.vo.Message;
+import cn.edu.nuc.onlinestore.vo.Result;
 
-public class ClientLoginAction extends Thread{
+public class ClientLoginAction{
 	private Socket socket;
-	private User user;
-	private DataInputStream dis=null;
+	private Message<User> message;
+	private ObjectInputStream dis=null;
 	private ObjectOutputStream oos=null;
-	public ClientLoginAction(User u){
+	private Result<User> tip;
+	public ClientLoginAction(Message<User> message){
 		try {
 			socket=new Socket("127.0.0.1", 4000);
-			this.user=u;
+			this.message=message;
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
-    @Override
-    public void run() {
+	//发送消息
+    public void send() {
     	// TODO Auto-generated method stub
     	try {
 			oos=new ObjectOutputStream(socket.getOutputStream());
-			oos.writeObject(user);
-			receive();
+			oos.writeObject(message);
+			set(receive());
 		} catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -44,14 +47,17 @@ public class ClientLoginAction extends Thread{
 			}
 		}
     }
-    public String  receive(){
+    //接受消息
+    public Result<User>  receive(){
     	try {
-			dis=new DataInputStream(socket.getInputStream());
-			String message=dis.readUTF();
-			if(message!=null){
-				return message;
+			dis=new ObjectInputStream(socket.getInputStream());
+			@SuppressWarnings("unchecked")
+			Result<User> result=(Result<User>)dis.readObject();
+			if(result!=null){
+				System.out.println(result);
+				return result;
 			}
-		} catch (IOException e) {
+		} catch (IOException | ClassNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}finally{
@@ -63,6 +69,12 @@ public class ClientLoginAction extends Thread{
 				System.out.println(e.getMessage());
 			}
 		}
-    	return "";
+    	return null;
+    }
+    public void set(Result<User> result){
+    	this.tip=result;
+    }
+    public Result<User> get(){
+    	return this.tip;
     }
 }

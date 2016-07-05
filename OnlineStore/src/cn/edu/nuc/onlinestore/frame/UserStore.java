@@ -93,13 +93,9 @@ public class UserStore extends JFrame {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				//连接服务端
-				
-				//调用RegistAction来注册
-				
-				//如果存在则提示  用户已存在
-				
-				//不存在 提示 用户注册成功
+				UserRegist ur=new UserRegist();
+				ur.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+				ur.setVisible(true);
 			}
 		});
 		contentPane.add(button_regist);

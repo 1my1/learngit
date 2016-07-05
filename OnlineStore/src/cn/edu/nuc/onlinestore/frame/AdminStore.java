@@ -6,10 +6,15 @@ import java.awt.EventQueue;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableModel;
 
+import cn.edu.nuc.onlinestore.action.AddGoodsService;
+import cn.edu.nuc.onlinestore.model.Goods;
+import cn.edu.nuc.onlinestore.model.GoodsStore;
 import cn.edu.nuc.onlinestore.utils.MyTableModel;
 
 import javax.swing.JScrollBar;
@@ -21,12 +26,15 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import java.awt.event.ActionListener;
+import java.util.Iterator;
 import java.awt.event.ActionEvent;
 
 public class AdminStore extends JFrame {
 
 	private JPanel contentPane;
 	private JTextField textField;
+	private AddGoodsService ags=new AddGoodsService();;
+	private GoodsStore goodsStore=new GoodsStore();
 	/**
 	 * Launch the application.
 	 */
@@ -57,16 +65,38 @@ public class AdminStore extends JFrame {
 		JPanel panel = new JPanel();
 		panel.setBounds(10, 78, 696, 341);
 		panel.setLayout(new GridLayout(1, 1, 0, 0));
+		final DefaultTableModel model = new DefaultTableModel();
+		model.addColumn("商品编号");
+		model.addColumn("名称");
+		model.addColumn("单价(人民币)");
+		model.addColumn("库存");
+		//model.addColumn("操作");
+		System.out.println(ags.showGoods().getGs());
+		goodsStore=ags.showGoods();
 		
+		for(Goods g:goodsStore.getGs()){
+			Object[] obj={g.getId(),g.getName(),g.getPrice(),g.getNum()};
+			model.addRow(obj);
+		}
+		/*model.addRow(new String[]{"1","水杯","15.00","200"});
+		model.addRow(new String[]{"2","水瓶","35.00","200"});
+		model.addRow(new String[]{"3","天堂伞","55.00","200"});
+		model.addRow(new String[]{"4","男袜","8.00","200"});
+		model.addRow(new String[]{"5","农夫山泉","2.00","200"});
+		model.addRow(new String[]{"6","毛巾","9.90","200"});
+		model.addRow(new String[]{"7","牙刷","15.00","200"});
+		model.addRow(new String[]{"8","洗发水","15.00","200"});
+		model.addRow(new String[]{"9","牙膏","15.00","200"});
+		model.addRow(new String[]{"10","海尔全自动洗衣机","2,699.00","200"});*/
+		final JTable table = new JTable( model );
 		contentPane.add(panel);
-		MyTableModel mtm=new MyTableModel();
+		
 		JButton button = new JButton("添加商品");
 		button.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				AdminAdd add = new AdminAdd();
+				AdminAdd add = new AdminAdd(model,ags);
 				add.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 				add.setVisible(true);
-				System.out.println(mtm.getColumnCount());
 			}
 		});
 		button.setBounds(386, 45, 93, 23);
@@ -75,7 +105,13 @@ public class AdminStore extends JFrame {
 		JButton button_1 = new JButton("修改商品");
 		button_1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				AdminUpdate u = new AdminUpdate();
+				int row=table.getSelectedRow();
+				String goodsName=(String)table.getValueAt(row, 1);
+				System.out.println(goodsName);
+				model.removeRow(row);
+				
+				Goods good=ags.findGoodByName(goodsName);
+				AdminUpdate u = new AdminUpdate(model,good);
 				u.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 				u.setVisible(true);
 			}
@@ -86,15 +122,19 @@ public class AdminStore extends JFrame {
 		JButton button_2 = new JButton("删除选中商品");
 		button_2.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				//得到当前选中商品项
-				new MyTableModel();
-				JOptionPane.showConfirmDialog(null, "确定要删除\"水杯\"么?" );
+				int row=table.getSelectedRow();
+				String goodsName=(String)table.getValueAt(row, 1);
+				System.out.println(goodsName);
+				Goods good=ags.findGoodByName(goodsName);
+				System.out.println(good);
+				ags.delete(good);
+				model.removeRow(row);
+				
 			}
 		});
 		button_2.setBounds(587, 45, 119, 23);
 		contentPane.add(button_2);
 		
-        JTable table = new JTable( mtm );
 		JScrollPane pane = new JScrollPane( table );
 		panel.add(pane);
 		
