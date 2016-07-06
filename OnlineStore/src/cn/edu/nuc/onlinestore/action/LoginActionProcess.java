@@ -111,6 +111,24 @@ public class LoginActionProcess {
     	  System.out.println("用户为空！");
     	  result.setMsg("error");
           return result;
+      }
+      public Result<User> save(User user){
+    	  Result<User> result=new Result<User>();
+    	  
+    	  try {
+    		   if(check(user)){
+    			   oos=new ObjectOutputStream(new FileOutputStream("d:/users/"+user.getName()+".data"));
+    			   oos.writeObject(user);
+    			   result.setMsg("success");
+    		   }else{
+    			   result.setMsg("error");
+    		   }
+		  } catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		  }
+    	  
+		  return result;
     	  
       }
 }

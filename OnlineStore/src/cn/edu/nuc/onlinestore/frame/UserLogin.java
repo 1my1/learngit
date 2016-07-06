@@ -25,7 +25,7 @@ public class UserLogin extends JFrame {
 	private JPanel contentPane;
 	private JTextField textField;
 	private JPasswordField passwordField;
-	private User user=null;
+	private User user;
 	
 
 	/**
@@ -47,7 +47,7 @@ public class UserLogin extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public UserLogin() {
+	public UserLogin(final JButton button_viewCart,final JFrame parent) {
 		setTitle("中北线在商场-登录");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 461, 349);
@@ -100,13 +100,18 @@ public class UserLogin extends JFrame {
 				cla.send();
 				//接受服务端发过来的提示信息     如果正确     提示登录成功   购物车变为可用
 				Result<User> result=cla.get();
+				System.out.println(result.getMsg());
 				if(!result.equals(null)){
 					String tip=result.getMsg();
-					user=result.getObj();
-					if(!"".equals(tip) && "success".equals(tip)){
+					User uu=result.getObj();
+					setUser(uu);
+					if(!"".equals(tip) && !"success".equals(tip)){
 						JOptionPane.showMessageDialog(null, tip);
+					}else{
+						button_viewCart.setEnabled(true);
+						parent.setTitle("中北在线商场--当前用户:"+getUser().getName());
+						UserLogin.this.setVisible(false);
 					}
-					
 				}
 				//如果不正确 提示登录失败  购物车不可用
 			}
@@ -122,5 +127,11 @@ public class UserLogin extends JFrame {
 	public void dispose() {
 		// TODO Auto-generated method stub
 		super.dispose();
+	}
+	public User getUser(){
+		return user;
+	}
+	public void setUser(User u){
+		this.user=u;
 	}
 }

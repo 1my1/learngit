@@ -92,7 +92,7 @@ public class AdminUpdate extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
 				
-				Goods g=good;
+				//Goods g=good;
 				ags=new AddGoodsService();
 				String gId=textField.getText();
 				String gName=textField_1.getText();
@@ -103,11 +103,13 @@ public class AdminUpdate extends JFrame {
 				System.out.println(gPrice);
 				System.out.println(gNum);
 				System.out.println(good);
-				g.setId(gId);
-				g.setName(gName);
-				g.setNum(Integer.parseInt(gNum));
-				g.setPrice(Double.parseDouble(gPrice));
-			    ags.modifyGood(g);
+				good.setId(gId);
+				good.setName(gName);
+				good.setNum(Integer.parseInt(gNum));
+				good.setPrice(Double.parseDouble(gPrice));
+				 System.out.println(good);
+			    ags.modifyGood(good);
+			   
 			    Object[] obj={gId,gName,gPrice,gNum};
 			    model.addRow(obj);
 			}

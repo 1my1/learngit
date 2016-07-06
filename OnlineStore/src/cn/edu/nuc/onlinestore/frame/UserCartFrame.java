@@ -45,9 +45,6 @@ public class UserCartFrame extends JFrame {
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 		
-		
-		
-		
 		DefaultTableModel model = new DefaultTableModel();
 		model.addColumn("商品编号");
 		model.addColumn("名称");
@@ -62,9 +59,9 @@ public class UserCartFrame extends JFrame {
 		table = new JTable( model );
 		table.setBounds(10, 38, 543, 184);
 		
-		//JScrollPane pane = new JScrollPane( table );
-		
-		contentPane.add( table );
+		JScrollPane pane = new JScrollPane( table );
+		pane.setVisible(true);
+		contentPane.add( pane );
 		
 		JLabel label = new JLabel("总商品数量: 8");
 		label.setBounds(195, 232, 116, 15);

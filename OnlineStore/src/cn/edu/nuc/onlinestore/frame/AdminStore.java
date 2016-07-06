@@ -73,10 +73,11 @@ public class AdminStore extends JFrame {
 		//model.addColumn("操作");
 		System.out.println(ags.showGoods().getGs());
 		goodsStore=ags.showGoods();
-		
-		for(Goods g:goodsStore.getGs()){
-			Object[] obj={g.getId(),g.getName(),g.getPrice(),g.getNum()};
-			model.addRow(obj);
+		if(!goodsStore.getGs().equals(null)){
+			for(Goods g:goodsStore.getGs()){
+				Object[] obj={g.getId(),g.getName(),g.getPrice(),g.getNum()};
+				model.addRow(obj);
+			}
 		}
 		/*model.addRow(new String[]{"1","水杯","15.00","200"});
 		model.addRow(new String[]{"2","水瓶","35.00","200"});
@@ -157,6 +158,25 @@ public class AdminStore extends JFrame {
 		
 		JButton button_4 = new JButton("搜索");
 		button_4.setBounds(180, 49, 93, 23);
+		button_4.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				String goodName=textField.getText().trim();
+				if("".equals(goodName) || goodName.equals(null)){
+					return;
+				}
+				Goods goods=ags.findGoodByName(goodName);
+				table.removeAll();
+				int row=model.getRowCount();
+				for(int i=0;i<row;i++){
+					model.removeRow(0);
+				}
+				Object[] obj={goods.getId(),goods.getName(),goods.getPrice(),goods.getNum()};
+				model.addRow(obj);
+			}
+		});
 		contentPane.add(button_4);
 	}
 }

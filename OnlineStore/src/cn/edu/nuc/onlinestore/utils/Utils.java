@@ -17,7 +17,6 @@ public class Utils {
 	 static Scanner sc=new Scanner(System.in);
 	 static ObjectInputStream ois;
 	 static ObjectOutputStream oos;
-	 static GoodsStore gs=new GoodsStore();
 	 static Set<Goods> goodSet=new HashSet<Goods>();
 	 public static boolean check(Admin a){
    	  Admin admin=null;
@@ -61,12 +60,10 @@ public class Utils {
 			return objs;
 	      }
 	     
-	      public static void write(Goods g,String path){
-	    	  gs.setGs(goodSet);
-	    	  gs.getGs().add(g);
+	      public static void write(GoodsStore goodsStore,String path){
 	    	  try{
 	    		  oos=new ObjectOutputStream(new FileOutputStream(path));
-	        	  oos.writeObject(gs);
+	        	  oos.writeObject(goodsStore);
 	    	  }catch(IOException e){
 	    		  e.printStackTrace();
 	    		  System.out.println(e.getMessage());

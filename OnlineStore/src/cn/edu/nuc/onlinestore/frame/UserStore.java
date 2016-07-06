@@ -5,8 +5,16 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.AbstractTableModel;
+import javax.swing.table.DefaultTableModel;
 
+import cn.edu.nuc.onlinestore.action.AddGoodsService;
+import cn.edu.nuc.onlinestore.action.ClientShowGoods;
+import cn.edu.nuc.onlinestore.model.Goods;
+import cn.edu.nuc.onlinestore.model.GoodsStore;
+import cn.edu.nuc.onlinestore.model.User;
 import cn.edu.nuc.onlinestore.utils.MyTableModel;
+import cn.edu.nuc.onlinestore.vo.Message;
+import cn.edu.nuc.onlinestore.vo.Result;
 
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -16,13 +24,19 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import java.awt.event.ActionListener;
+import java.util.HashSet;
+import java.util.Set;
 import java.awt.event.ActionEvent;
 
 public class UserStore extends JFrame {
 	private boolean DEBUG=false;
 	private JPanel contentPane;
 	private JTextField textField;
-
+	private User user=null;
+	private GoodsStore goodsStore;
+	private AddGoodsService ags;
+	private UserLogin ul=null;
+   
 	/**
 	 * Launch the application.
 	 */
@@ -43,7 +57,7 @@ public class UserStore extends JFrame {
 	 * Create the frame.
 	 */
 	public UserStore(){
-		setTitle("中北在线商场--当前用户:李四");
+		setTitle("中北在线商场--当前用户:null");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 732, 467);
 		contentPane = new JPanel();
@@ -54,24 +68,56 @@ public class UserStore extends JFrame {
 		JPanel panel = new JPanel();
 		panel.setBounds(10, 78, 696, 341);
 		panel.setLayout(new GridLayout(1, 1, 0, 0));
-		//自定义的tableModel
-		JTable table = new JTable( new MyTableModel() );
+		/*//自定义的tableModel
+		JTable table = new JTable( new MyTableModel() );*/
+		//得到服务端的商品
+		getResult();
+		//表格模型
+		final DefaultTableModel model = new DefaultTableModel();
+		
+		model.addColumn("商品编号");
+		model.addColumn("名称");
+		model.addColumn("单价(人民币)");
+		model.addColumn("库存");
+		//商品列表
+		if(!goodsStore.equals(null)){
+			if(!goodsStore.getGs().equals(null)){
+				for(Goods g:goodsStore.getGs()){
+					Object[] obj={g.getId(),g.getName(),g.getPrice(),g.getNum()};
+					model.addRow(obj);
+				}
+			}
+		}
+		
+		final JTable table = new JTable( model );
 		
 		JScrollPane pane = new JScrollPane( table );
 		
 		panel.add(pane);
 		contentPane.add(panel);
 		
-		JButton button_2 = new JButton("查看商品详细信息(或双单击商品列)");
-		button_2.addActionListener(new ActionListener() {
+		JLabel label = new JLabel("购物车:");
+		label.setBounds(10, 10, 90, 15);
+		contentPane.add(label);
+		//购物车中物品的数量
+		JLabel label_cart_goodsNum=new JLabel("8 件商品");
+		label_cart_goodsNum.setBounds(55,10,90,15);
+		contentPane.add(label_cart_goodsNum);
+		//购物车按钮
+		final JButton button_viewCart = new JButton("查看购物车");
+		button_viewCart.setEnabled(false);
+		button_viewCart.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				UserGoods d = new UserGoods();
-				d.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
-				d.setVisible(true);
+				
+				UserCartFrame cf = new UserCartFrame();
+				cf.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+				cf.setVisible(true);
+				
 			}
 		});
-		button_2.setBounds(407, 45, 299, 23);
-		contentPane.add(button_2);
+		button_viewCart.setBounds(116, 6, 110, 23);
+		contentPane.add(button_viewCart);
+		
 		//登录
 		JButton button_login=new JButton("登录");
 		button_login.setBounds(500, 6, 73, 23);
@@ -80,12 +126,41 @@ public class UserStore extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
-				UserLogin ul=new UserLogin();
+				ul=new UserLogin(button_viewCart,UserStore.this);
+				System.out.println("userLogin:"+ul.getUser());
+				setUser(ul.getUser());
 				ul.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 				ul.setVisible(true);
 			}
 		});
 		contentPane.add(button_login);
+		
+		JButton button_2 = new JButton("查看商品详细信息(或双单击商品列)");
+		button_2.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				int row=table.getSelectedRow();
+				int col=table.getColumnCount();
+				String goodsId=(String)model.getValueAt(row, 0);
+				String goodsName=(String)model.getValueAt(row, 1);
+				System.out.println("11"+goodsId);
+				System.out.println("11"+goodsName);
+				Goods goods=new Goods();
+				goods.setId(goodsId);
+				goods.setName(goodsName);
+				User uuu=getUser();
+				//ClientShowGoods csg=new ClientShowGoods(message)
+				Goods g=getGoods(goods);
+				UserGoods d = new UserGoods(g,uuu);
+				d.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+				d.setVisible(true);
+			}
+		});
+		button_2.setBounds(407, 45, 299, 23);
+		contentPane.add(button_2);
+		
+		
+		
+		
 		//注册新用户
 		JButton button_regist=new JButton("注册");
 		button_regist.setBounds(573, 6, 73, 23);
@@ -131,28 +206,37 @@ public class UserStore extends JFrame {
 		button_goodsSearch.setBounds(188, 45, 60, 23);
 		contentPane.add(button_goodsSearch);
 		//查询结束
-		
-		JLabel label = new JLabel("购物车:");
-		label.setBounds(10, 10, 90, 15);
-		contentPane.add(label);
-		//购物车中物品的数量
-		JLabel label_cart_goodsNum=new JLabel("8 件商品");
-		label_cart_goodsNum.setBounds(55,10,90,15);
-		contentPane.add(label_cart_goodsNum);
-		//购物车按钮
-		JButton button_viewCart = new JButton("查看购物车");
-		button_viewCart.setEnabled(false);
-		button_viewCart.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				
-				UserCartFrame cf = new UserCartFrame();
-				cf.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
-				cf.setVisible(true);
-				
+	}
+	public User getUser(){
+		return user;
+	}
+	public void setUser(User u){
+		this.user=u;
+	}
+	public GoodsStore getResult(){
+		Message<GoodsStore> message=new Message<GoodsStore>();
+		message.setMessage("viewGoodsStore");
+		ClientShowGoods csg=new ClientShowGoods(message);
+		csg.send();
+		Result<GoodsStore> result_viewGoods=csg.get();
+		goodsStore=result_viewGoods.getObj();
+		return goodsStore;
+	}
+	public Goods getGoods(Goods g){
+		Message<GoodsStore> message=new Message<GoodsStore>();
+		message.setMessage("viewDetail,"+g.getId()+","+g.getName());
+		ClientShowGoods csg=new ClientShowGoods(message);
+		csg.send();
+		Result<GoodsStore> result=csg.get();
+		GoodsStore store=result.getObj();
+		System.out.println("UserStore-->getGoods"+store);
+		if(!store.getGs().isEmpty()){
+			for(Goods goods:store.getGs()){
+				return goods;
 			}
-		});
-		button_viewCart.setBounds(116, 6, 110, 23);
-		contentPane.add(button_viewCart);
+		}
+		return null;
+		
 	}
 }
 
