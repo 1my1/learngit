@@ -19,7 +19,9 @@ import javax.swing.JTextField;
 import javax.swing.JPasswordField;
 import javax.swing.JButton;
 import javax.swing.ImageIcon;
-
+/*
+ * 用户登录
+ */
 public class UserLogin extends JFrame {
 
 	private JPanel contentPane;
@@ -79,7 +81,6 @@ public class UserLogin extends JFrame {
 		JButton button = new JButton("登录");
 		button.setBounds(255, 216, 93, 23);
 		button.addActionListener(new ActionListener(){
-			
 			@Override
 			public void actionPerformed(ActionEvent e) {
 			    User u=new User();
@@ -101,15 +102,15 @@ public class UserLogin extends JFrame {
 				//接受服务端发过来的提示信息     如果正确     提示登录成功   购物车变为可用
 				Result<User> result=cla.get();
 				System.out.println(result.getMsg());
-				if(!result.equals(null)){
+				if(result!=null){
 					String tip=result.getMsg();
 					User uu=result.getObj();
-					setUser(uu);
+					UserLogin.this.setUser(uu);
 					if(!"".equals(tip) && !"success".equals(tip)){
 						JOptionPane.showMessageDialog(null, tip);
 					}else{
 						button_viewCart.setEnabled(true);
-						parent.setTitle("中北在线商场--当前用户:"+getUser().getName());
+						parent.setTitle("中北在线商场--当前用户:"+UserLogin.this.getUser().getName());
 						UserLogin.this.setVisible(false);
 					}
 				}
@@ -124,7 +125,7 @@ public class UserLogin extends JFrame {
 		contentPane.add(lblNewLabel);
 	}
 	@Override
-	public void dispose() {
+	public void dispose(){
 		// TODO Auto-generated method stub
 		super.dispose();
 	}

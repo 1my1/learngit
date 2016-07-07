@@ -10,13 +10,10 @@ public class Cart implements Serializable {
 	
 	
 	private Map<Goods, Integer> maps = new HashMap<Goods, Integer>();
-	
 	//购物车商品总价格
 	private double totalPrice = 0;
-	//购物车商品总价格
+	//购物车商品总数量
 	private int totalQuantity = 0;
-	
-	
 	/**
 	 * 添加商品到购物车
 	 * @param goods
@@ -27,8 +24,14 @@ public class Cart implements Serializable {
 		
 		if( maps.get( goods ) == null ){
 			//如果maps 里没有该商品,直接添加
+			maps.put(goods, quantity);
 		} else {
 			//如果maps 里已存在当前添加商品,则累加商品数量
+			for(Map.Entry<Goods,Integer> entry:maps.entrySet()){
+				if(entry.getKey().equals(goods)){
+					entry.setValue(entry.getValue()+quantity);
+				}
+			}
 		}
 		
 		//添加商品后调用计算购物车总金额、总价格方法
@@ -72,10 +75,11 @@ public class Cart implements Serializable {
 		//先将总金额、总数量归零
 		this.totalPrice = 0;
 		this.totalQuantity = 0;
-		
-		
 		//遍历购物车 maps 重新计算购物车总价格、总数量
-		//代码省略....
+		for(Map.Entry<Goods,Integer> entry:maps.entrySet()){
+			this.totalQuantity++;
+			this.totalPrice+=(entry.getKey().getPrice())*(entry.getValue());
+		}
 	}
 
 	/**
@@ -93,7 +97,9 @@ public class Cart implements Serializable {
 	public int getTotalQuantity() {
 		return totalQuantity;
 	}
-	
+	public Map<Goods,Integer> getMaps(){
+		return maps;
+	}
 	
 
 }

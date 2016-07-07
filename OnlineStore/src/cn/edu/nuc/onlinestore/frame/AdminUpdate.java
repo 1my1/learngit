@@ -16,10 +16,13 @@ import cn.edu.nuc.onlinestore.action.AddGoodsService;
 import cn.edu.nuc.onlinestore.model.Goods;
 
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.JTextArea;
 import javax.swing.JButton;
-
+/*
+ * 商品修改
+ */
 public class AdminUpdate extends JFrame {
 
 	private JPanel contentPane;
@@ -98,20 +101,24 @@ public class AdminUpdate extends JFrame {
 				String gName=textField_1.getText();
 				String gPrice=textField_2.getText();
 				String gNum=textArea.getText();
-				System.out.println(gId);
-				System.out.println(gName);
-				System.out.println(gPrice);
-				System.out.println(gNum);
-				System.out.println(good);
 				good.setId(gId);
 				good.setName(gName);
 				good.setNum(Integer.parseInt(gNum));
 				good.setPrice(Double.parseDouble(gPrice));
-				 System.out.println(good);
-			    ags.modifyGood(good);
+				 //System.out.println(good);
+			    if(ags.modifyGood(good)){
+			    	
+			    	Object[] obj={gId,gName,gPrice,gNum};
+			    	model.addRow(obj);
+			    	int flag=JOptionPane.showConfirmDialog(null, "修改成功！","修改程序",JOptionPane.NO_OPTION);
+			    	if(flag==0){
+			    		AdminUpdate.this.setVisible(false);
+			    	}else{
+			    		JOptionPane.showConfirmDialog(null, "修改失败！","修改程序",JOptionPane.NO_OPTION);
+			    	}
+			    }
 			   
-			    Object[] obj={gId,gName,gPrice,gNum};
-			    model.addRow(obj);
+			    
 			}
 		});
 		contentPane.add(button);

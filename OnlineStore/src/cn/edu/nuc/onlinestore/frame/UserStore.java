@@ -27,7 +27,9 @@ import java.awt.event.ActionListener;
 import java.util.HashSet;
 import java.util.Set;
 import java.awt.event.ActionEvent;
-
+/*
+ * 用户主页面
+ */
 public class UserStore extends JFrame {
 	private boolean DEBUG=false;
 	private JPanel contentPane;
@@ -36,10 +38,7 @@ public class UserStore extends JFrame {
 	private GoodsStore goodsStore;
 	private AddGoodsService ags;
 	private UserLogin ul=null;
-   
-	/**
-	 * Launch the application.
-	 */
+	private JLabel label_cart_goodsNum=null;
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
@@ -52,7 +51,6 @@ public class UserStore extends JFrame {
 			}
 		});
 	}
-
 	/**
 	 * Create the frame.
 	 */
@@ -73,7 +71,17 @@ public class UserStore extends JFrame {
 		//得到服务端的商品
 		getResult();
 		//表格模型
-		final DefaultTableModel model = new DefaultTableModel();
+		final DefaultTableModel model = new DefaultTableModel(){
+			public boolean isCellEditable(int row, int col) {
+		           //Note that the data/cell address is constant,
+		           //no matter where the cell appears onscreen.
+		           if (col < 4) {
+		               return false;
+		           } else {
+		               return true;
+		           }
+		       }
+		};
 		
 		model.addColumn("商品编号");
 		model.addColumn("名称");
@@ -90,7 +98,7 @@ public class UserStore extends JFrame {
 		}
 		
 		final JTable table = new JTable( model );
-		
+		//model.;
 		JScrollPane pane = new JScrollPane( table );
 		
 		panel.add(pane);
@@ -100,7 +108,7 @@ public class UserStore extends JFrame {
 		label.setBounds(10, 10, 90, 15);
 		contentPane.add(label);
 		//购物车中物品的数量
-		JLabel label_cart_goodsNum=new JLabel("8 件商品");
+		label_cart_goodsNum=new JLabel("0");
 		label_cart_goodsNum.setBounds(55,10,90,15);
 		contentPane.add(label_cart_goodsNum);
 		//购物车按钮
@@ -108,11 +116,11 @@ public class UserStore extends JFrame {
 		button_viewCart.setEnabled(false);
 		button_viewCart.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				
-				UserCartFrame cf = new UserCartFrame();
+//				System.out.println("查看购物车:"+ul);
+//				System.out.println("查看购物车："+ul.getUser());
+				UserCartFrame cf = new UserCartFrame(ul);
 				cf.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 				cf.setVisible(true);
-				
 			}
 		});
 		button_viewCart.setBounds(116, 6, 110, 23);
@@ -147,10 +155,15 @@ public class UserStore extends JFrame {
 				Goods goods=new Goods();
 				goods.setId(goodsId);
 				goods.setName(goodsName);
-				User uuu=getUser();
+				User uuu=null;
+				if(ul==null){
+				}else{
+					uuu=ul.getUser();
+				}
+				System.out.println("查看商品详细信息："+uuu);
 				//ClientShowGoods csg=new ClientShowGoods(message)
 				Goods g=getGoods(goods);
-				UserGoods d = new UserGoods(g,uuu);
+				UserGoods d = new UserGoods(g,uuu,label_cart_goodsNum);
 				d.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 				d.setVisible(true);
 			}
@@ -204,6 +217,46 @@ public class UserStore extends JFrame {
 		
 		JButton button_goodsSearch = new JButton("搜索");
 		button_goodsSearch.setBounds(188, 45, 60, 23);
+		button_goodsSearch.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				Set<Goods> set=goodsStore.getGs();
+				String goodName=textField.getText().trim();
+				//搜索内容为空
+				if("".equals(goodName) || goodName.equals(null)){
+					int rows=model.getRowCount();
+					table.removeAll();
+					for(int i=0;i<rows;i++){
+						model.removeRow(0);
+					}
+					for(Goods goods:set){
+						Object[] obj={goods.getId(),goods.getName(),goods.getPrice(),goods.getNum()};
+						model.addRow(obj);
+					}
+					return;
+				}
+				//搜索内容不为空
+				Goods goods=null;
+				for(Goods g:set){
+					if (goodName.equals(g.getName())) {
+						goods=g;
+					}
+				}
+				if(goods!=null){
+					
+					//table.removeAll();
+					int row=model.getRowCount();
+					for(int i=0;i<row;i++){
+						model.removeRow(0);
+					}
+					Object[] obj={goods.getId(),goods.getName(),goods.getPrice(),goods.getNum()};
+					model.addRow(obj);
+					
+				}
+			}
+		});
 		contentPane.add(button_goodsSearch);
 		//查询结束
 	}

@@ -5,7 +5,9 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.Map;
 
+import cn.edu.nuc.onlinestore.frame.AdminStore;
 import cn.edu.nuc.onlinestore.model.Goods;
 import cn.edu.nuc.onlinestore.model.GoodsStore;
 import cn.edu.nuc.onlinestore.model.User;
@@ -13,7 +15,6 @@ import cn.edu.nuc.onlinestore.vo.Message;
 import cn.edu.nuc.onlinestore.vo.Result;
 
 public class ServerCheckThread extends Thread {
-	    
 	    private LoginActionProcess lap=null;
 		private ObjectOutputStream dos=null;
 		private ObjectInputStream ois=null;
@@ -24,7 +25,6 @@ public class ServerCheckThread extends Thread {
 			this.socket=socket;
 			this.start();
 		}
-	    
 		@Override
 	    public void run() {
 	    	// TODO Auto-generated method stub
@@ -32,6 +32,7 @@ public class ServerCheckThread extends Thread {
 				ois=new ObjectInputStream(socket.getInputStream());
 				@SuppressWarnings("unchecked")
 				Message<User> message=(Message<User>)ois.readObject();
+				System.err.println("接受到的信息购物车--"+message.getMessage());
 				lap=new LoginActionProcess();
 				sgap=new  ShowGoodsActionProcess();
 				if(message.getMessage().equals("login")){
@@ -47,11 +48,20 @@ public class ServerCheckThread extends Thread {
 					return;
 				}else if(message.getMessage().equals("save")){
 					Result<User> result_save=lap.save(message.getObj());
+					System.out.println("保存操作："+result_save.getMsg());
+					dos=new ObjectOutputStream(socket.getOutputStream());
+					dos.writeObject(result_save);
 				}else if(message.getMessage().equals("viewGoodsStore")){
 					Result<GoodsStore> result_showGoods=sgap.showAllGoods();
 					dos=new ObjectOutputStream(socket.getOutputStream());
 					dos.writeObject(result_showGoods);
 					return;
+				}else if(message.getMessage().equals("checkOut")){
+					User user=message.getObj();
+					System.out.println("按时尽量快点击发送来的快放假"+user);
+					Result<User> result_checkOut=lap.changeGoodsNum(user);
+					dos=new ObjectOutputStream(socket.getOutputStream());
+					dos.writeObject(result_checkOut);
 				}else if(message.getMessage().contains(",")){
 					System.out.println(message.getMessage());
 					String mess[]=message.getMessage().split(",");

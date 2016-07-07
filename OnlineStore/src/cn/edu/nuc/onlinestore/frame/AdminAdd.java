@@ -20,7 +20,9 @@ import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.JTextArea;
 import javax.swing.JButton;
-
+/*
+ * 管理员添加商品
+ */
 public class AdminAdd extends JFrame {
 
 	private JPanel contentPane;

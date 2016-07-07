@@ -6,18 +6,27 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.HashMap;
+import java.util.Map;
 
 import cn.edu.nuc.onlinestore.model.Admin;
+import cn.edu.nuc.onlinestore.model.Cart;
+import cn.edu.nuc.onlinestore.model.Goods;
+import cn.edu.nuc.onlinestore.model.GoodsStore;
 import cn.edu.nuc.onlinestore.model.User;
+import cn.edu.nuc.onlinestore.utils.Utils;
 import cn.edu.nuc.onlinestore.vo.Result;
+import test.Test;
 
 public class LoginActionProcess {
+	   private AddGoodsService ags=null;
 	   private ObjectInputStream ois=null;
 	   private ObjectOutputStream oos=null;
        public Result<User>  login(User user){
     	   Result<User> result=new Result<User>();
-		   if(check(user)){
-			   result.setObj(user);
+    	   User uu=check(user);
+		   if(uu!=null){
+			   result.setObj(uu);
 			   result.setMsg("success");
 			   return result;
 		   }
@@ -37,12 +46,11 @@ public class LoginActionProcess {
        public boolean check(Admin a){
     	   	  Admin admin=null;
     	   	  try {
-    				ois=new ObjectInputStream(new FileInputStream("d:/admin/admin.data"));
+    				ois=new ObjectInputStream(new FileInputStream("d:/home/admin.data"));
     				admin=(Admin)ois.readObject();
     			} catch (IOException|ClassNotFoundException e) {
     				// TODO Auto-generated catch block
-    				System.out.println(e.getMessage());
-    				e.printStackTrace();
+    				Test test=new Test();
     			}finally{
     				try {
     					if(ois!=null)
@@ -57,12 +65,12 @@ public class LoginActionProcess {
     	   	  }
     	   	  return false;
       }
-      public boolean check(User u){
+      public User check(User u){
     	   User user=null;
     	   try {
     		  File file=new File("d:/user/"+u.getName()+".data");
     		  if(!file.exists()){
-    			  return false;
+    			  return null;
     		  }
 			  ois=new ObjectInputStream(new FileInputStream(file));
 			  user=(User)ois.readObject();
@@ -79,9 +87,9 @@ public class LoginActionProcess {
 			}
 		   }
     	   if(user.equals(u)){
-    		   return true;
+    		   return user;
     	   }
-    	   return false;
+    	   return null;
       }
       public Result<User> regist(User u){
     	  Result<User> result=null;
@@ -116,8 +124,8 @@ public class LoginActionProcess {
     	  Result<User> result=new Result<User>();
     	  
     	  try {
-    		   if(check(user)){
-    			   oos=new ObjectOutputStream(new FileOutputStream("d:/users/"+user.getName()+".data"));
+    		   if(check(user)!=null){
+    			   oos=new ObjectOutputStream(new FileOutputStream("d:/user/"+user.getName()+".data"));
     			   oos.writeObject(user);
     			   result.setMsg("success");
     		   }else{
@@ -131,4 +139,25 @@ public class LoginActionProcess {
 		  return result;
     	  
       }
+      public Result<User> changeGoodsNum(User user){
+ 		 GoodsStore gs=Utils.read(GoodsStore.class,Utils.getStringpath("goods"));
+ 		 Map<Goods, Integer> map=user.getCart().getMaps();
+ 		 Cart cart=new Cart();
+ 		 user.setCart(cart);
+ 		 System.err.println("气温气温气温气温气温"+user.getCart().getMaps()==null);
+		 ags=new AddGoodsService();
+		 for(Goods g:gs.getGs()){
+			 for(Map.Entry<Goods, Integer> entry:map.entrySet()){
+				 if(entry.getKey().equals(g)){
+					 g.setNum(g.getNum()-entry.getValue());
+					 ags.modifyGood(g);
+				 }
+			 }
+		 }
+		 save(user);
+		 Result<User> result=new Result<>();
+		 result.setObj(user);
+		 result.setMsg("success");
+ 		 return result;
+ 	 }
 }

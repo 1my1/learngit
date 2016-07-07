@@ -23,7 +23,9 @@ import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.JTextArea;
 import javax.swing.JButton;
-
+/*
+ * 商品详情
+ */
 public class UserGoods extends JFrame {
 
 	private JPanel contentPane;
@@ -49,7 +51,7 @@ public class UserGoods extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public UserGoods(final Goods g,final User u) {
+	public UserGoods(final Goods g,final User u,final JLabel label_cartSize) {
 		//得到用户
 		this.user=u;
 		setTitle("商品详情");
@@ -117,7 +119,7 @@ public class UserGoods extends JFrame {
 					return;
 				}else{
 					Cart cart=null;
-					if(user.getCart().equals(null)){
+					if(user.getCart()==null){
 						cart=new Cart();
 					}else{
 						cart=user.getCart();
@@ -132,6 +134,7 @@ public class UserGoods extends JFrame {
 					String tip=save(user);
 					if(tip.equals("success")){
 						JOptionPane.showMessageDialog(null, "添加成功！");
+						label_cartSize.setText(cart.getMaps().size()+"");
 						return;
 					}else if(tip.equals("error")){
 						JOptionPane.showMessageDialog(null, "添加失败！");

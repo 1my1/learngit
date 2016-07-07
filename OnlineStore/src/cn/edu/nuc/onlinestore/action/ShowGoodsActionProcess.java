@@ -1,6 +1,7 @@
 package cn.edu.nuc.onlinestore.action;
 
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import cn.edu.nuc.onlinestore.model.Goods;
@@ -9,7 +10,7 @@ import cn.edu.nuc.onlinestore.utils.Utils;
 import cn.edu.nuc.onlinestore.vo.Result;
 
 public class ShowGoodsActionProcess {
-     
+     private AddGoodsService ags=null;
 	
 	 public Result<GoodsStore> showAllGoods(){
 		 Result<GoodsStore> result=new Result<>();
@@ -49,4 +50,5 @@ public class ShowGoodsActionProcess {
 		result.setObj(null);
 		return result;
 	 }
+	
 }

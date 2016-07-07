@@ -23,7 +23,9 @@ import javax.swing.JTextField;
 import javax.swing.JPasswordField;
 import javax.swing.JButton;
 import javax.swing.ImageIcon;
-
+/*
+ * 用户注册
+ */
 public class UserRegist extends JFrame {
 
 	private JPanel contentPane;

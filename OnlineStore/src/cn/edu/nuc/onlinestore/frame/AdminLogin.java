@@ -3,20 +3,25 @@ package cn.edu.nuc.onlinestore.frame;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.time.format.TextStyle;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
 import cn.edu.nuc.onlinestore.action.LoginActionProcess;
+import cn.edu.nuc.onlinestore.action.ServerCheck;
 import cn.edu.nuc.onlinestore.model.Admin;
+import test.Test;
 
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.JPasswordField;
 import javax.swing.JButton;
-
+/*
+ * 管理员登录
+ */
 public class AdminLogin extends JFrame {
 
 	private JPanel contentPane;
@@ -33,7 +38,7 @@ public class AdminLogin extends JFrame {
 					AdminLogin frame = new AdminLogin();
 					frame.setVisible(true);
 				} catch (Exception e) {
-					e.printStackTrace();
+					Test test=new Test();
 				}
 			}
 		});
@@ -90,7 +95,7 @@ public class AdminLogin extends JFrame {
 				boolean result=lap.check(a);
 				//如果正确进入adminStore页面
 				if(result){
-					AdminStore as=new AdminStore();
+					AdminStore as=new AdminStore(a);
 					as.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 					as.setVisible(true);
 					AdminLogin.this.setVisible(false);

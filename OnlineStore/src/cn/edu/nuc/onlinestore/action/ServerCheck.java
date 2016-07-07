@@ -3,11 +3,17 @@ package cn.edu.nuc.onlinestore.action;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 
 public class ServerCheck extends Thread {
 	    private ServerSocket server=null;
 	    private Socket socket=null;
+	    List<Socket> sockets=new ArrayList<>();
+	    private int size=0;
 	    public ServerCheck(){
 	    	try {
 				server=new ServerSocket(4000);
@@ -19,10 +25,12 @@ public class ServerCheck extends Thread {
 	    }
 	
         @Override
-        public void run() {
+        public void run(){
         	try {
 				while(true){
 					socket=server.accept();
+					sockets.add(socket);
+					++size;
 					new ServerCheckThread(socket);
 				}
 			} catch (IOException e) {
@@ -30,9 +38,13 @@ public class ServerCheck extends Thread {
 			}
         	
         }
-        
-        public static void main(String[] args) {
-			new ServerCheck();
+
+		public int getSize() {
+			return size;
 		}
-        
+
+		private void setSize(int size) {
+			this.size = size;
+		}
+       
 }

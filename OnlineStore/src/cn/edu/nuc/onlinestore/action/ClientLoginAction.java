@@ -51,8 +51,10 @@ public class ClientLoginAction{
     public Result<User>  receive(){
     	try {
 			dis=new ObjectInputStream(socket.getInputStream());
+			//System.err.println("就发生了肯德基"+dis.readObject());
 			@SuppressWarnings("unchecked")
 			Result<User> result=(Result<User>)dis.readObject();
+			//System.err.println("就发生了肯德基--->"+result.getObj().getCart().getMaps().size());
 			if(result!=null){
 				System.out.println(result);
 				return result;

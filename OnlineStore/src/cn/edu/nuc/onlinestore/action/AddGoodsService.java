@@ -15,12 +15,13 @@ public class AddGoodsService {
 		gs.setGs(goodsSet);
     	Utils.write(gs,Utils.getStringpath("goods"));
     }
-    public void modifyGood(Goods g){
+    public boolean modifyGood(Goods g){
     	GoodsStore gs= Utils.read(GoodsStore.class,Utils.getStringpath("goods"));
     	Set<Goods> goodSet=gs.getGs();
     	Goods goods=findGoodByName(g.getName());
     	goodSet.remove(goods);
-    	System.out.println(goodSet.add(g));
+    	goodSet.add(g);
+//    	System.out.println(goodSet.add(g));
     	gs.setGs(goodSet);
     	Utils.write(gs, Utils.getStringpath("goods"));
     	/*Goods good=null;
@@ -41,6 +42,7 @@ public class AddGoodsService {
     		System.out.println(goo.getPrice());
     		addGood(goo);
     	}*/
+		return true;
     }
     public GoodsStore showGoods(){
     	GoodsStore gs=Utils.read(GoodsStore.class,Utils.getStringpath("goods"));
